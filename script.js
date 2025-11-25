@@ -1,101 +1,120 @@
-// Global Game Variables
+// ===========================================
+// 1. FIREBASE CONFIGURATION (ΒΑΛΕ ΤΑ ΔΙΚΑ ΣΟΥ ΚΛΕΙΔΙΑ ΕΔΩ)
+// ===========================================
+const firebaseConfig = {
+    // [ΕΔΩ ΕΠΙΚΟΛΛΑΣ ΤΟΝ ΚΩΔΙΚΑ ΠΟΥ ΑΝΤΕΓΡΑΨΕΣ]
+    // Example format:
+    // apiKey: "AIzaSyC0L...", 
+    // authDomain: "guessthenumbergame-53441.firebaseapp.com",
+    // projectId: "guessthenumbergame-53441",
+    // storageBucket: "guessthenumbergame-53441.appspot.com",
+    // messagingSenderId: "1059...",
+    // appId: "1:1059..."
+};
+
+// Initialize Firebase and Firestore
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const scoresCollection = db.collection('global_scores'); // Όνομα συλλογής στη βάση δεδομένων
+
+// ===========================================
+// 2. GLOBAL GAME VARIABLES AND HTML ELEMENTS
+// ===========================================
 let randomNumber;
 let attempts = 0;
 let gameOver = false;
 let playerName = '';
 
-// Select All HTML Elements
-// Screens
 const welcomeScreen = document.getElementById('welcome-screen');
 const gameScreen = document.getElementById('game-screen');
 const greeting = document.getElementById('greeting');
-// Nickname Input
 const playerNameInput = document.getElementById('playerNameInput');
 const startButton = document.getElementById('startButton');
-// Game
 const guessInput = document.getElementById('guessInput');
 const checkButton = document.getElementById('checkButton');
 const message = document.getElementById('message');
 const attemptsDisplay = document.getElementById('attempts');
 const restartButton = document.getElementById('restartButton');
-// Leaderboard
 const leaderboardBody = document.querySelector('#leaderboard-table tbody');
-const resetLeaderboardButton = document.getElementById('resetLeaderboardButton');
 
 
 // ===========================================
-// LEADERBOARD LOGIC (Save & Load)
+// 3. FIREBASE LEADERBOARD LOGIC
 // ===========================================
 
-// Loads scores from localStorage
-function getLeaderboard() {
-    const jsonScores = localStorage.getItem('guessingGameLeaderboard');
-    return jsonScores ? JSON.parse(jsonScores) : [];
-}
-
-// Saves a new score
-function saveScore(name, score) {
-    const leaderboard = getLeaderboard();
-    
-    // Add the new score
-    leaderboard.push({ name: name, score: score });
-    
-    // Sort (fewer attempts is better)
-    leaderboard.sort((a, b) => a.score - b.score);
-    
-    // Keep only the top 10 (optional)
-    const topScores = leaderboard.slice(0, 10);
-    
-    // Save back to localStorage
-    localStorage.setItem('guessingGameLeaderboard', JSON.stringify(topScores));
-    
-    // Update the on-screen table
-    renderLeaderboard();
-}
-
-// Displays the leaderboard on the HTML
-function renderLeaderboard() {
-    leaderboardBody.innerHTML = ''; // Clear the table
-    const scores = getLeaderboard();
-
-    if (scores.length === 0) {
-        leaderboardBody.innerHTML = '<tr><td colspan="2">No scores recorded yet.</td></tr>';
-        return;
+// Saves a new score to Firebase
+async function saveScore(name, score) {
+    try {
+        await scoresCollection.add({
+            name: name,
+            score: score,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        console.log("Score successfully written to database!");
+        renderLeaderboard(); // Φόρτωσε ξανά τον πίνακα για να φανεί το νέο σκορ
+    } catch (e) {
+        console.error("Error adding document: ", e);
+        // Alert only for critical errors, as the global leaderboard is critical
+        alert("Could not save score. Please check the Firebase connection."); 
     }
-
-    scores.forEach(item => {
-        const row = leaderboardBody.insertRow();
-        const nameCell = row.insertCell();
-        const scoreCell = row.insertCell();
-        
-        nameCell.textContent = item.name;
-        scoreCell.textContent = item.score;
-    });
 }
 
+// Fetches and displays the top 10 scores from Firebase
+async function renderLeaderboard() {
+    leaderboardBody.innerHTML = '<tr><td colspan="2">Loading global scores...</td></tr>';
+    
+    try {
+        // Fetch top 10 scores, ordered by attempts ascending (lowest score is best)
+        const snapshot = await scoresCollection
+            .orderBy('score', 'asc') 
+            .limit(10) 
+            .get();
+
+        leaderboardBody.innerHTML = ''; 
+
+        if (snapshot.empty) {
+            leaderboardBody.innerHTML = '<tr><td colspan="2">No global scores recorded yet.</td></tr>';
+            return;
+        }
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const row = leaderboardBody.insertRow();
+            const nameCell = row.insertCell();
+            const scoreCell = row.insertCell();
+            
+            nameCell.textContent = data.name;
+            scoreCell.textContent = data.score;
+        });
+    } catch (e) {
+        console.error("Error fetching documents: ", e);
+        leaderboardBody.innerHTML = '<tr><td colspan="2">Error loading scores. Check Firebase rules.</td></tr>';
+    }
+}
+
+
 // ===========================================
-// GAME START AND LOGIC
+// 4. GAME LOGIC
 // ===========================================
 
-// Starts a new game round
 function startNewGame() {
     randomNumber = Math.floor(Math.random() * 100) + 1;
     attempts = 0;
     gameOver = false;
     
-    // Reset game elements
     attemptsDisplay.textContent = `Attempts: ${attempts}`;
     message.textContent = '';
     message.style.color = '#333';
     guessInput.value = '';
     
-    // Enable input/button and hide restart button
     guessInput.disabled = false;
     checkButton.disabled = false;
     restartButton.style.display = 'none';
+    
+    // Εμφάνισε τον πίνακα κατάταξης σε κάθε νέα έναρξη παιχνιδιού
+    renderLeaderboard(); 
 }
 
-// Function to check the guess
 function checkGuess() {
     if (gameOver) return;
 
@@ -110,15 +129,13 @@ function checkGuess() {
     attemptsDisplay.textContent = `Attempts: ${attempts}`;
 
     if (guess === randomNumber) {
-        // GAME OVER: Player wins
+        // GAME OVER: Save score to Firebase!
         message.textContent = `🎉 Congratulations, ${playerName}! You found the number ${randomNumber} in ${attempts} attempts!`;
         message.style.color = 'green';
         gameOver = true;
         
-        // Save the score
-        saveScore(playerName, attempts); 
+        saveScore(playerName, attempts); // ΚΑΛΕΙ ΤΗΝ FIREBASE ΣΥΝΑΡΤΗΣΗ
         
-        // Lock input and show restart button
         guessInput.disabled = true;
         checkButton.disabled = true;
         restartButton.style.display = 'block';
@@ -134,9 +151,7 @@ function checkGuess() {
     guessInput.value = '';
 }
 
-// Handles the start of the game
 function handleStartGame() {
-    // Clean up the name and remove unnecessary spaces
     const inputName = playerNameInput.value.trim(); 
     
     if (inputName === '') {
@@ -146,22 +161,18 @@ function handleStartGame() {
 
     playerName = inputName;
     
-    // Change screen: From Welcome to Game
     welcomeScreen.style.display = 'none';
     gameScreen.style.display = 'block';
     
-    // Display greeting with the player's nickname
     greeting.textContent = `Welcome, ${playerName}!`;
     
-    // Start the first round
     startNewGame();
 }
 
 // ===========================================
-// EVENT LISTENERS
+// 5. EVENT LISTENERS AND INITIALIZATION
 // ===========================================
 
-// 1. Start game from welcome screen
 startButton.addEventListener('click', handleStartGame);
 playerNameInput.addEventListener('keyup', (event) => {
     if (event.key === 'Enter') {
@@ -169,7 +180,6 @@ playerNameInput.addEventListener('keyup', (event) => {
     }
 });
 
-// 2. Check guess
 checkButton.addEventListener('click', checkGuess);
 guessInput.addEventListener('keyup', (event) => {
     if (event.key === 'Enter') {
@@ -177,20 +187,9 @@ guessInput.addEventListener('keyup', (event) => {
     }
 });
 
-// 3. Restart game (with the same nickname)
 restartButton.addEventListener('click', startNewGame);
 
-// 4. Clear the Leaderboard
-resetLeaderboardButton.addEventListener('click', () => {
-    if (confirm('Are you sure you want to clear the leaderboard?')) {
-        localStorage.removeItem('guessingGameLeaderboard');
-        renderLeaderboard();
-    }
-});
-
-// ===========================================
-// INITIALIZATION (Runs when the page loads)
-// ===========================================
+// Load the global leaderboard when the page starts
 document.addEventListener('DOMContentLoaded', () => {
-    renderLeaderboard(); // Load the leaderboard at the start
+    renderLeaderboard(); 
 });
