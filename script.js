@@ -117,7 +117,7 @@ try {
         const guess = parseInt(guessInput.value);
 
         if (isNaN(guess) || guess < 1 || guess > 100) {
-            message.textContent = "❌ Please enter a valid number between 1 and 100.";
+            message.textContent = " Please enter a valid number between 1 and 100.";
             return;
         }
 
@@ -125,7 +125,7 @@ try {
         attemptsDisplay.textContent = `Attempts: ${attempts}`;
 
         if (guess === randomNumber) {
-            message.textContent = `🎉 Congratulations, ${playerName}! You found the number ${randomNumber} in ${attempts} attempts!`;
+            message.textContent = ` Congratulations, ${playerName}! You found the number ${randomNumber} in ${attempts} attempts!`;
             message.style.color = 'green';
             gameOver = true;
             
@@ -136,10 +136,10 @@ try {
             restartButton.style.display = 'block';
 
         } else if (guess < randomNumber) {
-            message.textContent = '📉 Too Low! Try a higher number.';
+            message.textContent = ' Too Low! Try a higher number.';
             message.style.color = 'blue';
         } else {
-            message.textContent = '📈 Too High! Try a lower number.';
+            message.textContent = ' Too High! Try a lower number.';
             message.style.color = 'red';
         }
         
@@ -192,8 +192,9 @@ try {
     console.error("Critical error during Firebase initialization:", error);
     // Εμφάνιση φιλικού μηνύματος στον χρήστη αν αποτύχει η αρχικοποίηση
     const msg = document.getElementById('message');
-    if(msg) msg.innerHTML = "❌ **CRITICAL ERROR:** Global Leaderboard disabled. Check console for Firebase config errors.";
+    if(msg) msg.innerHTML = "CRITICAL ERROR: Global Leaderboard disabled. Check console for Firebase config errors.";
 }
+
 
 
 
