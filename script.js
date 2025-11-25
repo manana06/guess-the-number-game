@@ -2,16 +2,16 @@
 // 1. FIREBASE CONFIGURATION (ΒΑΛΕ ΤΑ ΔΙΚΑ ΣΟΥ ΚΛΕΙΔΙΑ ΕΔΩ)
 // ===========================================
 const firebaseConfig = {
-    // [ΕΔΩ ΕΠΙΚΟΛΛΑΣ ΤΟΝ ΚΩΔΙΚΑ ΠΟΥ ΑΝΤΕΓΡΑΨΕΣ]
-    // Example format:
-    // apiKey: "AIzaSyC0L...", 
-    // authDomain: "guessthenumbergame-53441.firebaseapp.com",
-    // projectId: "guessthenumbergame-53441",
-    // storageBucket: "guessthenumbergame-53441.appspot.com",
-    // messagingSenderId: "1059...",
-    // appId: "1:1059..."
+    const firebaseConfig = {
+    apiKey: "AIzaSy...", 
+    authDomain: "guessthenumbergame-53441.firebaseapp.com",
+    // >>> ΑΥΤΗ Η ΓΡΑΜΜΗ ΕΙΝΑΙ Η ΠΙΟ ΣΗΜΑΝΤΙΚΗ:
+    projectId: "guessthenumbergame-53441", 
+    // <<<
+    storageBucket: "guessthenumbergame-53441.appspot.com",
+    messagingSenderId: "1059...",
+    appId: "1:1059..."
 };
-
 // Initialize Firebase and Firestore
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
@@ -193,3 +193,4 @@ restartButton.addEventListener('click', startNewGame);
 document.addEventListener('DOMContentLoaded', () => {
     renderLeaderboard(); 
 });
+
