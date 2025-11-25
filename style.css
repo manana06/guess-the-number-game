@@ -1,0 +1,81 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #fce4ec; /* Πολύ απαλό ροζ φόντο */
+}
+
+.container, .screen {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
+    margin-bottom: 20px;
+}
+
+h1, h2 {
+    color: #e91e63; /* Έντονο ροζ για τους τίτλους */
+}
+
+#guessInput, #playerNameInput { 
+    padding: 10px;
+    margin: 15px 0;
+    width: 80%;
+    border: 2px solid #f8bbd0; /* Απαλό ροζ περίγραμμα */
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+}
+
+button {
+    background-color: #f06292; /* Κουμπιά σε ροζ */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 5px;
+}
+
+button:hover {
+    background-color: #e91e63; /* Πιο σκούρο ροζ στο hover */
+}
+
+/* Στυλ για τον Πίνακα Κατάταξης */
+#leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+#leaderboard-table th, #leaderboard-table td {
+    border: 1px solid #f8bbd0; /* Ροζ περίγραμμα πίνακα */
+    padding: 8px;
+    text-align: center;
+}
+
+#leaderboard-table th {
+    background-color: #f48fb1; /* Ροζ για το header του πίνακα */
+    color: white; /* Άσπρο κείμενο στο header */
+}
+
+/* Χρώματα μηνυμάτων - μπορείς να τα προσαρμόσεις */
+#message {
+    font-weight: bold;
+}
+#message[style*="color: green"] {
+    color: #8bc34a !important; /* Πράσινο για επιτυχία (μπορείς να βάλεις πιο απαλό πράσινο ή ροζ) */
+}
+#message[style*="color: blue"] {
+    color: #4fc3f7 !important; /* Μπλε για χαμηλή μαντεψιά */
+}
+#message[style*="color: red"] {
+    color: #ef5350 !important; /* Κόκκινο για ψηλή μαντεψιά */
+}
