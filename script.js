@@ -2,13 +2,13 @@
 // 1. FIREBASE CONFIGURATION  
 // ===========================================
 const firebaseConfig = {
-    apiKey: "YOUR_ACTUAL_API_KEY", 
-    authDomain: "guessthenumbergame-53441.firebaseapp.com",
-    projectId: "guessthenumbergame-53441",
-    storageBucket: "guessthenumbergame-53441.appspot.com",
-    messagingSenderId: "YOUR_ACTUAL_SENDER_ID",
-    appId: "YOUR_ACTUAL_APP_ID",
-    measurementId: "YOUR_ACTUAL_MEASUREMENT_ID"
+  apiKey: "AIzaSyA5XY2ei1DZYlJwhQ9ihNJOw7UyyRnztrk",
+  authDomain: "guessthenumbergame-53441.firebaseapp.com",
+  projectId: "guessthenumbergame-53441",
+  storageBucket: "guessthenumbergame-53441.firebasestorage.app",
+  messagingSenderId: "1059233083894",
+  appId: "1:1059233083894:web:4f8e32abe93abf035a17d7",
+  measurementId: "G-L17ZBJESQF"
 };
 
 // Initialize Firebase and Firestore
@@ -194,5 +194,6 @@ try {
     const msg = document.getElementById('message');
     if(msg) msg.innerHTML = "❌ **CRITICAL ERROR:** Global Leaderboard disabled. Check console for Firebase config errors.";
 }
+
 
 
