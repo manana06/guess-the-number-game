@@ -10,13 +10,14 @@
     
     <div id="welcome-screen" class="screen">
         <h2>Welcome to Guess the Hidden Number!</h2>
-        <p>Please enter your Nickname to start the game:</p>
+        <p>Please enter your **Nickname** to start the game:</p>
         <input type="text" id="playerNameInput" placeholder="My Nickname" maxlength="20">
         <button id="startButton">Start Game</button>
     </div>
 
     <div id="game-screen" class="screen" style="display: none;">
-        <h1 id="greeting"></h1> <p>Guess a number between 1 and 100.</p>
+        <h1 id="greeting"></h1> 
+        <p>Guess a number between 1 and 100.</p>
         
         <input type="number" id="guessInput" placeholder="Enter your guess" min="1" max="100">
         <button id="checkButton">Check</button>
@@ -28,7 +29,7 @@
     </div>
     
     <div id="leaderboard-container" class="container">
-        <h2> Leaderboard</h2>
+        <h2> Global Leaderboard (Top 10)</h2>
         <table id="leaderboard-table">
             <thead>
                 <tr>
@@ -39,9 +40,11 @@
             <tbody>
                 </tbody>
         </table>
-        <button id="resetLeaderboardButton" style="margin-top: 15px;">Clear Leaderboard</button>
-    </div>
+        </div>
 
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    
     <script src="script.js"></script>
 </body>
 </html>
